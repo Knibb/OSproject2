@@ -5,7 +5,7 @@ my weakest language. Sadly, I was not able to complete that goal has I greatly u
 
 Syntax to run the project:
 
-./oss -h -n [#] -s [#] -t [#]
+./oss -h -n [#] -s [#] -t [#] [#]
 
 run ./oss for more detail on syntax and what each tak does.
 

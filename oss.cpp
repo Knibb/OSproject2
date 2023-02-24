@@ -8,12 +8,17 @@
 #include <iostream>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <semaphore.h>
+#include <errno.h>
+
 
 using namespace std;
 
 int main(int argc, char** argv){
         int opt;
-        //remember that if you what an argument to accept a value you have to have a : after it
+        //remember that if you want an argument to accept a value you have to have a : after it
         //example[opt = getopt(argc, argv, ":hn:s")) <- the n: is now going to expect a vlaue]
         int sec = 0;
         int nano = 0;
@@ -88,4 +93,3 @@ int main(int argc, char** argv){
         }
 return 0;
 }
-
