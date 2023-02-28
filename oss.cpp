@@ -13,18 +13,17 @@
 #include <semaphore.h>
 #include <errno.h>
 
-
 using namespace std;
 
 int main(int argc, char** argv){
-        int opt;
-        //remember that if you want an argument to accept a value you have to have a : after it
-        //example[opt = getopt(argc, argv, ":hn:s")) <- the n: is now going to expect a vlaue]
-        int sec = 0;
-        int nano = 0;
-        int sim = 0;
-        int proc = 0;
-        //while loop that takes in user provided arguments that then get given to variables: proc, sim, iter.
+    int opt;
+    //remember that if you want an argument to accept a value you have to have a : after it
+    //example[opt = getopt(argc, argv, ":hn:s")) <- the n: is now going to expect a vlaue]
+    int max_Sec = 0;
+    int max_Nano = 0;
+    int sim = 0;
+    int proc = 0;
+    //while loop that takes in user provided arguments that then get given to variables: proc, sim, iter.
         //proc will house the number of processes to launch
         //sim will house how many simultaneous proccess that will be ran at a time
         //iter will house how many iterations of the workers
@@ -35,8 +34,8 @@ int main(int argc, char** argv){
                                 printf("example: oss -n7 -s3 -t5.\n");
                                 printf("-h: Display help prompt.\n");
                                 printf("-n: specifies the number of total processes the user wants launched.\n");
-                                printf("-s: specifies the number of processes that can be running at the smae time.\n");
-                                printf("-t: specifies the number of iterations the worker should perform.\n");
+                                printf("-s: specifies the number of processes that can be running at the same time.\n");
+                                printf("-t: specifies the amount of time the process should live.\n");
                                 exit(0);
                         case 'n':
                         //      printf("%s\n", optarg);
@@ -48,48 +47,37 @@ int main(int argc, char** argv){
                                 break;
                         case 't':
                         //      printf("%s\n", optarg);
-                                sec = atoi(optarg);
-                                nano = atoi(optarg);
+                                max_Sec = atoi(optarg);
+                                max_Nano = atoi(optarg);
                                 break;
                         case '?':
                                 printf("unknown option");
                                 break;
                 }
         }
-        // tracker will be used to keep track of how many proccesses are running to ensure that
-        // there aren't any orphans
-        int tracker = 0;
-        //create child proccesses
-        for (int count=0;count < proc; count++){
-                void *shared_mem;
-                char buff[100];
-                int shmid;
-                //created shared memory with key 1616, of size 1024, and with the permissions to read/write.
-                shmid = shmget((key_t)1616, 1024, 0666|IPC_CREAT)
-                //attatch shared memory to this process
-                shared_mem = shmat (shmid,NULL,0);
-                read(sec,buff,1);
-                strcpy(shared_mem,buff);
-                read(nano,buff,10);
-                strcpy(shared_mem,buff);
-                int pid = fork();
-                if (pid == 0){
-                //if pid is 0 then child
-                std::stringstream ss;
-                ss<<sec;
-                execl("./worker","./worker",ss.str().c_str() ,NULL);
-                }
-                //increment tracker to keep track of proccesses
-                tracker++;
-                if(tracker >= sim){
-                //if there are more processes then the specified amount then wait for a proccess to end
-                wait(NULL);
-		tracker--;
-                }
-        }
-        //insures there are nor orphans by waiting for all proccesses to die
-        for (int i = 0; i<tracker;i++){
-        wait(NULL);
-        }
-return 0;
+
+	struct PCB {
+		int occupied; // either true or false
+		pid_t pid; // process id of this child
+		int startSeconds; // time when it was forked
+		int startNano; // time when it was forked
+	};
+
+	struct PCB processTable[20];
+	int sec = 0;
+	int nano = 0;
+	while(max_Sec > sec && max_Nano > nano) {
+		nano = nano + 1000;
+		if(nano >= 1000000000){
+			sec = sec + 1;
+			nano = 0;
+		}
+	}
+
+	
+
+
+
+
+
 }
