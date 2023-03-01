@@ -4,6 +4,10 @@ Syntax to run the project:
 
 run ./oss for more detail on syntax and what each flag does.
 
+How to compile:
+
+for my Makefile you mush rm oss worker THEN run make to compile. Otherwise if it sees the exe files it won't compile new ones over the pre-existing ones.
+
 Difficulties:
 
 I couldn't get shared memory to work for the life of me until the very end. So I got to the point where shared memory was created and I could write to it if I wanted but timed out when I got to the point of getting worker to interact with it. I also deleted my oss.cpp file on accident which I hadn't backed up for quite some time so I lost a few days worth of work which really sucks but at least I learned a life leason.
