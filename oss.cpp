@@ -37,15 +37,12 @@ int main(int argc, char** argv){
                 	printf("-t: specifies the number of iterations the worker should perform.\n");
                 	exit(0);
                 case 'n':
-                        printf("%s\n", optarg);
                         proc = atoi(optarg);
                         break;
                 case 's':
-        		printf("%s\n", optarg);
                         sim = atoi(optarg);
                         break;
                 case 't':
-        		printf("%s\n", optarg);
                         max_Sec = atoi(optarg);
                         break;
                 case '?':
@@ -69,15 +66,15 @@ int main(int argc, char** argv){
 			tracker++;
 			if(tracker >= sim){
 			//if there are more processes then the specified amount then wait for a proccess to end
-				wait(NULL);
+				int pid2 = waitpid(-1, NULL, WNOHANG);
+				//wait(NULL);
 				tracker--;
 			}
 		}
 	}
 	//insures there are no orphans by waiting for all processes to die
 	for (int i = 0; i<tracker;i++){
-	int pid2 = waitpid(-1, &status, WNOHANG);
-	//wait(NULL);
+	wait(NULL);
 	}
 shmdt(sharedMem_Sec);
 shmctl(memID_Sec, IPC_RMID, NULL);
