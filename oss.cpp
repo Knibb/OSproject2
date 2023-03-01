@@ -14,13 +14,12 @@
 using namespace std;
 
 int main(int argc, char** argv){
-	memIDSeconds = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | 0640);
-	sysClockSeconds = (int*) shmat(memIDSeconds, (void*) 0, 0);
+	int memID_Sec = shmget((key_t)1616, sizeof(int), IPC_CREAT | 0640);
+	int* sharedMem_Sec = (int*) shmat(memID_Sec, (void*) 0, 0);
         int opt;
         //remember that if you want an argument to accept a value you have to have a : after it
         //example[opt = getopt(argc, argv, ":hn:s")) <- the n: is now going to expect a vlaue]
-      	int sec = 0;
-        int nano = 0;
+      	int max_Sec = 0;
         int sim = 0;
         int proc = 0;
         //while loop that takes in user provided arguments that then get given to variables: proc, sim, iter.
@@ -47,7 +46,7 @@ int main(int argc, char** argv){
                         break;
                 case 't':
         		printf("%s\n", optarg);
-                        sec = atoi(optarg);
+                        max_Sec = atoi(optarg);
                         break;
                 case '?':
                         printf("unknown option");
@@ -64,19 +63,23 @@ int main(int argc, char** argv){
 			ss<<max_Sec;
 			execl("./worker","./worker",ss.str().c_str() ,NULL);
 		}
+		//else parent
+		else{
 		//increment tracker to keep track of proccesses
-		tracker++;
-		if(tracker >= sim){
-		//if there are more processes then the specified amount then wait for a proccess to end
-		wait(NULL);
-		tracker--;
+			tracker++;
+			if(tracker >= sim){
+			//if there are more processes then the specified amount then wait for a proccess to end
+				wait(NULL);
+				tracker--;
+			}
 		}
 	}
 	//insures there are no orphans by waiting for all processes to die
 	for (int i = 0; i<tracker;i++){
-	wait(NULL);
+	int pid2 = waitpid(-1, &status, WNOHANG);
+	//wait(NULL);
 	}
-shmdt(sysClockSeconds);
-shmctl(memIDSeconds, IPC_RMID, NULL);
+shmdt(sharedMem_Sec);
+shmctl(memID_Sec, IPC_RMID, NULL);
 return 0;
 }	
